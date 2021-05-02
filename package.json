@@ -1,0 +1,13 @@
+{
+    "name": "java-script-basics",
+    "version": "1.0.0",
+    "description": "JS Basics Starter",
+    "main": "scrip.js",
+    "scripts": {
+        "start": "lite-server"
+    },
+    "author": "Anita Agrawal",
+    "devDependencies": {
+        "lite-server": "2.6.1"
+    }
+}

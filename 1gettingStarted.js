@@ -25,7 +25,7 @@ alert('Hello world!');
 */
 
 // Uncomment below and save, then you'll see web page is loaded with an alert "Hello World!".
-alert("Hello World!"); // alerts in web page
+// alert("Hello World!"); // alerts in web page
 
 // **************************************** Detecting and Fixing Errors *************************************
 // 1. Add Console.log(); statement to print any intermediate values of a property

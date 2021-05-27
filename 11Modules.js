@@ -1,7 +1,7 @@
 // **************************************** Consuming Modules with Import *************************************
 
 // To execute this code, go to index.html line #15 and replace it with
-// <script src="./11Modules.js"></script>
+// <script src="./11Modules.js" type="module"></script>
 
 // Import module
 import {sayHelloTo} from './10Modules.js'

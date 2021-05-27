@@ -1,0 +1,79 @@
+{
+    "photo": {
+        "id": "51156768727",
+        "secret": "507b1cfdf0",
+        "server": "65535",
+        "farm": 66,
+        "dateuploaded": "1620136326",
+        "isfavorite": 0,
+        "license": "0",
+        "safety_level": "0",
+        "rotation": 0,
+        "originalsecret": "f892dbcd64",
+        "originalformat": "jpg",
+        "owner": {
+            "nsid": "154152664@N07",
+            "username": "georgeedwardd",
+            "realname": "george hinzo",
+            "location": "",
+            "iconserver": "0",
+            "iconfarm": 0,
+            "path_alias": null
+        },
+        "title": {
+            "_content": "1Z0A7572-Edit.jpg"
+        },
+        "description": {
+            "_content": ""
+        },
+        "visibility": {
+            "ispublic": 1,
+            "isfriend": 0,
+            "isfamily": 0
+        },
+        "dates": {
+            "posted": "1620136326",
+            "taken": "2021-05-02 10:37:55",
+            "takengranularity": "0",
+            "takenunknown": "0",
+            "lastupdate": "1620136328"
+        },
+        "views": "0",
+        "editability": {
+            "cancomment": 0,
+            "canaddmeta": 0
+        },
+        "publiceditability": {
+            "cancomment": 1,
+            "canaddmeta": 0
+        },
+        "usage": {
+            "candownload": 1,
+            "canblog": 0,
+            "canprint": 0,
+            "canshare": 1
+        },
+        "comments": {
+            "_content": "0"
+        },
+        "notes": {
+            "note": []
+        },
+        "people": {
+            "haspeople": 0
+        },
+        "tags": {
+            "tag": []
+        },
+        "urls": {
+            "url": [
+                {
+                    "type": "photopage",
+                    "_content": "https:\/\/www.flickr.com\/photos\/154152664@N07\/51156768727\/"
+                }
+            ]
+        },
+        "media": "photo"
+    },
+    "stat": "ok"
+}

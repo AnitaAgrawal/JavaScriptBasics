@@ -171,7 +171,7 @@ class PasswordValidationErrorClass {
     static missingLowerCase = new PasswordValidationError(PasswordValidationErrorMessage.missingLowerCase)
 }
 
-function validatePassword(inputText) {
+export function validatePassword(inputText) {
     let passwordRegXLength = /^[A-Za-z0-9]\w{6,20}$/
     let passwordRegXMissingNumber = /^(?=.*\d).{6,20}$/
     let passwordRegXMissingUpperCase = /[A-Z]/

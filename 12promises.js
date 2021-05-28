@@ -786,9 +786,9 @@ try {
         console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: success: Photos: ', responsePhotos);
     console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: success: PhotoInfo: ', responsePhotoInfo);
     })
-    .catch (error) {
+    .catch ((error) => {
         console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: failure: ', error);
-    }
+    })
 } catch (error) {
     console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: failure: ', error);
 }

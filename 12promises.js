@@ -182,7 +182,7 @@ function failureBlock(msg) {
  * @returns — A Promise for the completion of which ever callback is executed.
  */
 
-myPromise.then(successBlock, failureBlock) //success block called with msg: Valid password
+// myPromise.then(successBlock, failureBlock) //success block called with msg: Valid password
 
 /**
  * The methods 
@@ -211,10 +211,15 @@ function handlePasswordValidation(passwordText) {
     return passwordPromise
 }
 
-handlePasswordValidation('hello')
-    .then(value => { console.log(`success response: ${value}`) })
-    .catch(value => { console.log(`failure response: ${value}`) })
+// handlePasswordValidation('hello')
+//     .then(value => { console.log(`success response: ${value}`) })
+//     .catch(value => { console.log(`failure response: ${value}`) })
+
 //failure response: Password must be between 6 to 20 characters and must not contain other than alphnumeric characters
+
+
+//******************************************** Sequential API calls using promises ***********************************************************
+
 
 function fetchFinbackWhalePhotosFromSearchAPI() {
     let fetchPromise = new Promise((resolve, reject) => {
@@ -227,8 +232,14 @@ function fetchFinbackWhalePhotosFromSearchAPI() {
         // 3. Load success block
         xhr.onload = () => {
             photos = JSON.parse(xhr.responseText)
-            console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
-            resolve(photos)
+            if (photos.stat === "ok") {
+                console.log('success status:', xhr.status)
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
         }
         xhr.onerror = () => {
             console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
@@ -261,6 +272,523 @@ function getPhotoInfo(photos) {
     xhr2.send()
 }
 
-fetchFinbackWhalePhotosFromSearchAPI()
-.then(value => getPhotoInfo(value))
-.catch(error => console.log('error occurred: ', error.description))
+// fetchFinbackWhalePhotosFromSearchAPI()
+// .then(value => getPhotoInfo(value))
+// .catch(error => console.log('error occurred: ', error.description))
+
+
+//******************************************** Parallel API calls using promises ***********************************************************
+
+function promiseAll() {
+    let promise1 = new Promise((resolve, reject) => {
+        // Service call 1
+        // 1. create xml http Request object
+        let xhr = new XMLHttpRequest()
+        // 2. Add URL to the request
+        xhr.open('GET', "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=3e7cc266ae2b0e0d78e279ce8e361736&text=Finback%20Whale&format=json&nojsoncallback=1&safe_search=1")
+        let photos = []
+        // 3. Load success block
+        xhr.onload = () => {
+            photos = JSON.parse(xhr.responseText)
+            if (photos.stat === "ok") {
+                console.log('success status:', xhr.status)
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
+        }
+        xhr.onerror = () => {
+            console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
+            reject(xhr.responseText)
+        }
+        //4. Call the service
+        xhr.send()
+    })
+
+    let promise2 = new Promise((resolve, reject) => {
+        // Service call 2
+        // 1. create xml http Request object
+        let xhr = new XMLHttpRequest()
+        // 2. Add URL to the request
+        xhr.open('GET', "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=3e7cc266ae2b0e0d78e279ce8e361736&text=Red%20Rose&format=json&nojsoncallback=1&safe_search=1")
+        let photos = []
+        // 3. Load success block
+        xhr.onload = () => {
+            photos = JSON.parse(xhr.responseText)
+            if (photos.stat === "ok") {
+                console.log('success status:', xhr.status)
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
+        }
+        xhr.onerror = () => {
+            console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
+            reject(xhr.responseText)
+        }
+        //4. Call the service
+        xhr.send()
+    })
+
+    let promise3 = new Promise((resolve, reject) => {
+        // Service call 3
+        // 1. create xml http Request object
+        let xhr = new XMLHttpRequest()
+        // 2. Add URL to the request
+        xhr.open('GET', "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=3e7cc266ae2b0e0d78e279ce8e361736&text=Pink%20Rose&format=json&nojsoncallback=1&safe_search=1")
+        let photos = []
+        // 3. Load success block
+        xhr.onload = () => {
+            photos = JSON.parse(xhr.responseText)
+            if (photos.stat === "ok") {
+                console.log('success status:', xhr.status)
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
+        }
+        xhr.onerror = () => {
+            console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
+            reject(xhr.responseText)
+        }
+        //4. Call the service
+        xhr.send()
+    })
+
+
+    Promise.all([promise1, promise2, promise3])
+    .then(([res1, res2, res3]) => {
+        console.log('response 1: ', res1)
+        console.log('response 2: ', res2)
+        console.log('response 3: ', res3)
+    })
+}
+
+// promiseAll()
+
+// Case where we wanna stop execution for other APIs once one of the API failes. Promise.all() does that.
+function promiseAllWithError() {
+    let promise1 = new Promise((resolve, reject) => {
+        // Service call 1
+        // 1. create xml http Request object
+        let xhr = new XMLHttpRequest()
+        // 2. Add URL to the request
+        xhr.open('GET', "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=3e7cc266ae2b0e0d78e279ce8e361736&text=Finback%20Whale&format=json&nojsoncallback=1&safe_search=1")
+        let photos = []
+        // 3. Load success block
+        xhr.onload = () => {
+            photos = JSON.parse(xhr.responseText)
+            if (photos.stat === "ok") {
+                console.log('success status:', xhr.status)
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
+        }
+        xhr.onerror = () => {
+            console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
+            reject(xhr.responseText)
+        }
+        //4. Call the service
+        xhr.send()
+    })
+
+    let promise2 = new Promise((resolve, reject) => {
+        // Service call 2
+        // 1. create xml http Request object
+        let xhr = new XMLHttpRequest()
+        // 2. Add URL to the request
+        xhr.open('GET', "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=3e7cc266ae2b0e0d78e279ce8e361736&text=Red%20Rose&format=json&nojsoncallback=1&safe_search=1")
+        let photos = []
+        // 3. Load success block
+        xhr.onload = () => {
+            photos = JSON.parse(xhr.responseText)
+            if (photos.stat === "ok") {
+                console.log('success status:', xhr.status)
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
+        }
+        xhr.onerror = () => {
+            console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
+            reject(xhr.responseText)
+        }
+        //4. Call the service
+        xhr.send()
+    })
+
+    let promise3 = new Promise((resolve, reject) => {
+        // Service call 3
+        // 1. create xml http Request object
+        let xhr = new XMLHttpRequest()
+        // 2. Add URL to the request
+        xhr.open('GET', "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=3e7cc266ae2b0e0d78e279ce8e361736&text=Pink%20Rose&format=json&nojsoncallback=1&safe_search=1")
+        let photos = []
+        // 3. Load success block
+        xhr.onload = () => {
+            photos = JSON.parse(xhr.responseText)
+            if (photos.stat === "ok") {
+                console.log('success status:', xhr.status)
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
+        }
+        xhr.onerror = () => {
+            console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
+            reject(xhr.responseText)
+        }
+        //4. Call the service
+        xhr.send()
+    })
+
+    let promise4 = new Promise((resolve, reject) => {
+        // Service call 4 with invalid api key
+        // 1. create xml http Request object
+        let xhr = new XMLHttpRequest()
+        // 2. Add URL to the request
+        xhr.open('GET', "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=e7cc266ae2b0e0d78e279ce8e361736&text=Pink%20Rose&format=json&nojsoncallback=1&safe_search=1")
+        let photos = []
+        // 3. Load success block
+        xhr.onload = () => {
+            photos = JSON.parse(xhr.responseText)
+            if (photos.stat === "ok") {
+                console.log('success status:', xhr.status)
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
+        }
+        xhr.onerror = () => {
+            console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
+            reject(xhr.responseText)
+        }
+        //4. Call the service
+        xhr.send()
+    })
+
+
+    Promise.all([promise1, promise2, promise3, promise4])
+    .then(([res1, res2, res3, res4]) => {
+        console.log('response 1: ', res1)
+        console.log('response 2: ', res2)
+        console.log('response 3: ', res3)
+        console.log('response 4: ', res4)
+    })
+    .catch(error => {
+        console.log('promiseAllWithError error: ', error)
+    })
+}
+
+// promiseAllWithError()
+/*
+[Log] fetchFinbackWhalePhotosFromSearchAPI error occurred:  – "Invalid API Key (Key has invalid format)" (12promises.js, line 473)
+[Log] promiseAllWithError error:  – "{\"stat\":\"fail\",\"code\":100,\"message\":\"Invalid API Key (Key has invalid format)\"}" (12promises.js, line 494)
+[Log] success status: – 200 (12promises.js, line 388)
+[Log] fetchFinbackWhalePhotosFromSearchAPI success:  – {photos: Object, stat: "ok"} (12promises.js, line 389)
+{photos: Object, stat: "ok"}Object
+[Log] success status: – 200 (12promises.js, line 442)
+[Log] fetchFinbackWhalePhotosFromSearchAPI success:  – {photos: Object, stat: "ok"} (12promises.js, line 443)
+{photos: Object, stat: "ok"}Object
+[Log] success status: – 200 (12promises.js, line 415)
+[Log] fetchFinbackWhalePhotosFromSearchAPI success:  – {photos: Object, stat: "ok"} (12promises.js, line 416)
+{photos: Object, stat: "ok"}Object
+*/
+
+/**
+ * allSettled() returned data
+ * 
+ * reslolve.js
+ * {
+ *  status: 'fulfilled'
+ *  value: {}
+ * }
+ * 
+ * 
+ * rejected.js
+ * {
+ *  status: 'rejected'
+ *  reason: {}
+ * }
+ */
+
+
+ function promiseSettleAllWithError() {
+    let promise1 = new Promise((resolve, reject) => {
+        // Service call 1
+        // 1. create xml http Request object
+        let xhr = new XMLHttpRequest()
+        // 2. Add URL to the request
+        xhr.open('GET', "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=3e7cc266ae2b0e0d78e279ce8e361736&text=Finback%20Whale&format=json&nojsoncallback=1&safe_search=1")
+        let photos = []
+        // 3. Load success block
+        xhr.onload = () => {
+            photos = JSON.parse(xhr.responseText)
+            if (photos.stat === "ok") {
+                console.log('success status:', xhr.status)
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
+        }
+        xhr.onerror = () => {
+            console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
+            reject(xhr.responseText)
+        }
+        //4. Call the service
+        xhr.send()
+    })
+
+    let promise2 = new Promise((resolve, reject) => {
+        // Service call 2
+        // 1. create xml http Request object
+        let xhr = new XMLHttpRequest()
+        // 2. Add URL to the request
+        xhr.open('GET', "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=3e7cc266ae2b0e0d78e279ce8e361736&text=Red%20Rose&format=json&nojsoncallback=1&safe_search=1")
+        let photos = []
+        // 3. Load success block
+        xhr.onload = () => {
+            photos = JSON.parse(xhr.responseText)
+            if (photos.stat === "ok") {
+                console.log('success status:', xhr.status)
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
+        }
+        xhr.onerror = () => {
+            console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
+            reject(xhr.responseText)
+        }
+        //4. Call the service
+        xhr.send()
+    })
+
+    let promise3 = new Promise((resolve, reject) => {
+        // Service call 3
+        // 1. create xml http Request object
+        let xhr = new XMLHttpRequest()
+        // 2. Add URL to the request
+        xhr.open('GET', "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=3e7cc266ae2b0e0d78e279ce8e361736&text=Pink%20Rose&format=json&nojsoncallback=1&safe_search=1")
+        let photos = []
+        // 3. Load success block
+        xhr.onload = () => {
+            photos = JSON.parse(xhr.responseText)
+            if (photos.stat === "ok") {
+                console.log('success status:', xhr.status)
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
+        }
+        xhr.onerror = () => {
+            console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
+            reject(xhr.responseText)
+        }
+        //4. Call the service
+        xhr.send()
+    })
+
+    let promise4 = new Promise((resolve, reject) => {
+        // Service call 4 with invalid api key
+        // 1. create xml http Request object
+        let xhr = new XMLHttpRequest()
+        // 2. Add URL to the request
+        xhr.open('GET', "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=e7cc266ae2b0e0d78e279ce8e361736&text=Pink%20Rose&format=json&nojsoncallback=1&safe_search=1")
+        let photos = []
+        // 3. Load success block
+        xhr.onload = () => {
+            photos = JSON.parse(xhr.responseText)
+            if (photos.stat === "ok") {
+                console.log('success status:', xhr.status)
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
+        }
+        xhr.onerror = () => {
+            console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
+            reject(xhr.responseText)
+        }
+        //4. Call the service
+        xhr.send()
+    })
+
+    Promise.allSettled([promise1, promise2, promise3, promise4])
+    .then(([res1, res2, res3, res4]) => {
+        console.log('response 1: ', res1)
+        console.log('response 2: ', res2)
+        console.log('response 3: ', res3)
+        console.log('response 4: ', res4)
+    })
+    .catch(error => {
+        console.log('promiseAllWithError error: ', error)
+    })
+}
+
+// promiseSettleAllWithError()
+
+
+/** ways to queue Promises
+ * all() -> This will stop the execution of other APIs if one of the API is failed
+ * allSettled() --> This will continue the execution of all the APIs irrespective of their failure
+ * race() --> Stops the execution once one of the API returns success
+ */
+
+
+//******************************************** Async and await ***********************************************************
+/* With function signature
+
+async function gettNames() {
+    return []
+}
+
+*/
+
+/* With arrow signature
+
+const getNames = async () => {
+    return []
+}
+
+*/
+
+//The async keyword desiganate that the getNames function is asynchronous
+// The async fuction returns implicit promise, as underneath it, it operates on promise
+// Return value is wrapped in a promise, for success resolved promise, for failure rejected promise.
+
+
+// Await keyword pauses the execution of asynchrounous function while it waits for the promise to be fulfilled.
+// Await must be used inside of an async function
+// Await blocks current function only, doesnot block the calling function
+
+/*
+const getNames = async () => {
+    await someFunc()
+    doSomethingElse()
+}
+
+getNames()
+getAddress()
+
+*/
+
+/**
+ * Here, await will block getNames, while waiting for someFunc to finish
+ * it wont go to doSomethingElse until it finishes someFunc
+ * getAddress will not be blocked and will continue to execute
+ */
+const serchFinbackWhale = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=3e7cc266ae2b0e0d78e279ce8e361736&text=Finback%20Whale&format=json&nojsoncallback=1&safe_search=1"
+const getPhotoInfo = "https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=3e7cc266ae2b0e0d78e279ce8e361736&photo_id=51134911427&format=json&nojsoncallback=1&safe_search=1"
+
+function getDataFrom(serviceId) {
+    let fetchPromise = new Promise((resolve, reject) => {
+        // Service call 1
+        // 1. create xml http Request object
+        let xhr = new XMLHttpRequest()
+        // 2. Add URL to the request
+        xhr.open('GET', serviceId)
+        let photos = []
+        // 3. Load success block
+        xhr.onload = () => {
+            photos = JSON.parse(xhr.responseText)
+            if (photos.stat === "ok") {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI success: ', photos)
+                resolve(photos)
+            } else {
+                console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', photos.message)
+                reject(xhr.responseText)
+            }
+        }
+        xhr.onerror = () => {
+            console.log('fetchFinbackWhalePhotosFromSearchAPI error occurred: ', xhr.responseText)
+            reject(xhr.responseText)
+        }
+        //4. Call the service
+        xhr.send()
+    })
+    return fetchPromise
+}
+
+async function fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait() {
+    return getDataFrom(serchFinbackWhale)
+}
+try {
+    const responsePhotos = await fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait()
+
+    console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: success: ', responsePhotos);
+} catch (error) {
+    console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: failure: ', error);
+}
+
+// Chaining multiple calls in sequential fashion
+
+async function fetchFinbackWhalePhotosInfoFromGetInfoAPIUsingAsyncAwait() {
+    return getDataFrom(getPhotoInfo)
+}
+try {
+    const responsePhotos = await fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait()
+    const responsePhotoInfo = await fetchFinbackWhalePhotosInfoFromGetInfoAPIUsingAsyncAwait()
+    console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: success: Photos: ', responsePhotos);
+    console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: success: PhotoInfo: ', responsePhotoInfo);
+} catch (error) {
+    console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: failure: ', error);
+}
+
+// queuing multiple calls in non-sequential fashion
+
+try {
+    const response1 = await fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait()
+    const response2 = await fetchFinbackWhalePhotosInfoFromGetInfoAPIUsingAsyncAwait()
+
+    console.log('Called both services concurrently, now waithing for them to be finished')
+
+    const responsePhotos = await response1
+    const responsePhotoInfo = await response2
+
+    console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: success: Photos: ', responsePhotos);
+    console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: success: PhotoInfo: ', responsePhotoInfo);
+} catch (error) {
+    console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: failure: ', error);
+}
+
+// parallel calls using async await
+
+try {
+    await Promise.all([
+        fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait(),
+        fetchFinbackWhalePhotosInfoFromGetInfoAPIUsingAsyncAwait()
+    ])
+    .then(([responsePhotos, responsePhotoInfo]) => {
+        console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: success: Photos: ', responsePhotos);
+    console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: success: PhotoInfo: ', responsePhotoInfo);
+    })
+    .catch (error) {
+        console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: failure: ', error);
+    }
+} catch (error) {
+    console.log('fetchFinbackWhalePhotosFromSearchAPIUsingAsyncAwait: failure: ', error);
+}

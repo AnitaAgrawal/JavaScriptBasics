@@ -1,7 +1,7 @@
 // **************************************** Promises *************************************
 
 // To execute this code, go to index.html line #15 and replace it with
-// <script src="./12promises.js"></script>
+// <script src="./12promises.js" type="module"></script>
 
 /** Course overview
  * Consuming and creating Promises
